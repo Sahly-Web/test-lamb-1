@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lamp Login Form Animation</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #111317;
+      overflow: hidden;
+    }
+
+    /* الحاوية الأساسية للمشهد */
+    .scene {
+      position: relative;
+      width: 720px;
+      height: 480px;
+      background: #181a20;
+      border-radius: 16px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 40px 60px;
+      overflow: hidden;
+      border: 1px solid #2a2e39;
+    }
+
+    /* ---------- المصباح ---------- */
+    .lamp {
+      position: relative;
+      width: 140px;
+      height: 320px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 5;
+    }
+
+    .lamp-shade {
+      width: 130px;
+      height: 70px;
+      background: #e6e6e6;
+      border-radius: 70px 70px 0 0;
+      position: relative;
+      z-index: 4;
+      box-shadow: inset 0 -8px 12px rgba(0, 0, 0, 0.2);
+      transition: all 0.4s ease;
+    }
+
+    .lamp-neck {
+      width: 18px;
+      height: 12px;
+      background: #8b8f98;
+      z-index: 3;
+    }
+
+    .lamp-pole {
+      width: 10px;
+      height: 220px;
+      background: #a0a4ae;
+      z-index: 2;
+    }
+
+    .lamp-base {
+      width: 120px;
+      height: 16px;
+      background: #e6e6e6;
+      border-radius: 10px 10px 4px 4px;
+      z-index: 2;
+    }
+
+    /* خيط السحب التفاعلي */
+    .cord {
+      position: absolute;
+      top: 70px;
+      right: 25px;
+      cursor: pointer;
+      z-index: 10;
+      transition: transform 0.2s ease;
+    }
+
+    .cord .string {
+      width: 2px;
+      height: 65px;
+      background: #c2c5ce;
+      margin: 0 auto;
+    }
+
+    .cord .ball {
+      width: 12px;
+      height: 12px;
+      background: #f1c40f;
+      border-radius: 50%;
+      box-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
+    }
+
+    .cord.pull {
+      transform: translateY(18px);
+    }
+
+    /* ---------- مخروط وشعاع الضوء ---------- */
+    .light-beam {
+      position: absolute;
+      top: 70px;
+      left: 65px;
+      width: 480px;
+      height: 300px;
+      background: radial-gradient(
+        ellipse at 0% 20%,
+        rgba(255, 235, 160, 0.35) 0%,
+        rgba(255, 220, 120, 0.1) 50%,
+        transparent 80%
+      );
+      clip-path: polygon(0 0, 100% 0%, 100% 100%, 0 80%);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+      z-index: 1;
+    }
+
+    /* ---------- نموذج الدخول (Form) ---------- */
+    .login-form {
+      width: 280px;
+      padding: 30px 25px;
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(25px);
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 3;
+    }
+
+    .login-form h2 {
+      color: #fff;
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      color: #a4abb6;
+      margin-bottom: 6px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px 12px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 6px;
+      color: #fff;
+      outline: none;
+      font-size: 13px;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-group input:focus {
+      border-color: #f1c40f;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 11px;
+      margin-top: 10px;
+      background: linear-gradient(135deg, #f7d070, #e0a32b);
+      border: none;
+      border-radius: 6px;
+      color: #1a1a1a;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(241, 196, 15, 0.25);
+      transition: opacity 0.3s ease, transform 0.1s ease;
+    }
+
+    .login-btn:hover {
+      opacity: 0.92;
+    }
+
+    .login-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* ---------- الحالة عند تشغيل المصباح (Active) ---------- */
+    .scene.active .lamp-shade {
+      background: #fff6d9;
+      box-shadow: 0 0 35px #ffd778;
+    }
+
+    .scene.active .light-beam {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .scene.active .login-form {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(0);
+      box-shadow: 0 10px 30px rgba(255, 220, 120, 0.08);
+      border-color: rgba(255, 225, 140, 0.25);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="scene">
+    <!-- المصباح -->
+    <div class="lamp">
+      <div class="lamp-shade"></div>
+      <div class="lamp-neck"></div>
+      <div class="lamp-pole"></div>
+      <div class="lamp-base"></div>
+
+      <!-- حبل الإشعال -->
+      <div class="cord" id="lampCord" title="اضغط لتشغيل/إطفاء الضوء">
+        <div class="string"></div>
+        <div class="ball"></div>
+      </div>
+
+      <!-- شعاع الضوء -->
+      <div class="light-beam"></div>
+    </div>
+
+    <!-- فورم تسجيل الدخول -->
+    <div class="login-form">
+      <h2>Welcome</h2>
+      <form onsubmit="return false;">
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" placeholder="Enter name" />
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" placeholder="Enter Password" />
+        </div>
+        <button class="login-btn" type="submit">Sign In</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const lampCord = document.getElementById('lampCord');
+    const scene = document.querySelector('.scene');
+
+    lampCord.addEventListener('click', () => {
+      // تأثير سحب الخيط للأسفل
+      lampCord.classList.add('pull');
+      setTimeout(() => {
+        lampCord.classList.remove('pull');
+      }, 200);
+
+      // تشغيل وإطفاء الإضاءة مع إظهار الفورم
+      scene.classList.toggle('active');
+    });
+  </script>
+</body>
+</html>
